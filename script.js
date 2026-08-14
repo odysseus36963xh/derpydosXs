@@ -809,8 +809,15 @@ function playCellMedia(cell, overlapMs) {
       }
     });
 
-    if (popup) {
-      popup.innerHTML = "";
+
+
+
+     if (popup) {
+      const stillActive = new Set(window.currentMediaElements || []);
+      Array.from(popup.children).forEach(child => {
+        if (child.tagName === "AUDIO" && stillActive.has(child)) return; // keep playing
+        popup.removeChild(child);
+      });
 
       images.forEach(url => {
         const img = document.createElement("img");
@@ -830,7 +837,7 @@ function playCellMedia(cell, overlapMs) {
       if (images.length || videos.length || audios.length) {
         popup.classList.add("show");
       }
-    }
+     }
 
     // If only image/video but no audio, do not block long
     if (!audios.length) {
