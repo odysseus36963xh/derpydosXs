@@ -2332,3 +2332,32 @@ function extractRange(mode) {
     alert("✅ Range cleared!");
   }
 }
+
+
+
+
+
+
+
+
+// ===============================
+// MAX CONCURRENT OVERLAP AUDIO WATCHER
+// Keeps at most MAX_CONCURRENT_AUDIO clips playing at once.
+// When a new one pushes the count over the limit, the OLDEST
+// currently-playing audio is stopped and dropped.
+// ===============================
+(function () {
+  const MAX_CONCURRENT_AUDIO = 3; // change this number to taste
+
+  setInterval(() => {
+    const list = window.currentMediaElements;
+    if (!list || list.length <= MAX_CONCURRENT_AUDIO) return;
+
+    while (list.length > MAX_CONCURRENT_AUDIO) {
+      const oldest = list.shift(); // index 0 = earliest one still playing
+      if (!oldest) break;
+      try { oldest.pause(); } catch (e) {}
+      try { oldest.remove(); } catch (e) {} // pull it out of the popup too
+    }
+  }, 200); // checks 5x/sec
+})();
